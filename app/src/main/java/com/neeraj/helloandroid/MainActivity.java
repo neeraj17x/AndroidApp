@@ -17,12 +17,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        // Adding but functionality
+        // Adding button functionality
         Button button = findViewById(R.id.button);
         button.setOnClickListener(v -> {
             TextView textView = findViewById(R.id.textView);
             String text = String.valueOf(textView.getText()).replace("!", "");
             textView.setText(String.format("%s again!", text));
+        });
+
+        // Adding clear button
+        Button buttonClear = findViewById(R.id.buttonClear);
+        buttonClear.setOnClickListener(v -> {
+            TextView textView = findViewById(R.id.textView);
+            textView.setText("welcome Neeraj");
         });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
