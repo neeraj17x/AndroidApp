@@ -6,7 +6,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
+//import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -14,21 +14,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+//import androidx.room.Room;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+//import java.util.ArrayList;
+//import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final List<Expense> expenses = new ArrayList<>();
+    // static final List<Expense> expenses = new ArrayList<>();
+
+    //private ExpenseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        // Database builder (Room)
+        //database = Room.databaseBuilder(getApplicationContext(), ExpenseDatabase.class, "expense_database").build();
+        ExpenseDatabase database = DatabaseProvider.getDatabase(this);
         // Adding control values
         Spinner paymentTypeSpinner = findViewById(R.id.paymentTypeSpinner);
 
@@ -56,7 +62,12 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             double expenseAmount = Double.parseDouble(amount);
             Expense expense = new Expense(expenseAmount, description, paymentType, date);
-            expenses.add(expense);
+            //expenses.add(expense);
+            new Thread(() -> {database.expenseDao().insert(expense);}).start();
+            // Empty all fields
+            amountInput.setText("");
+            descriptionInput.setText("");
+            paymentTypeSpinner.setSelection(0);
             Toast.makeText(this, "Expense added!", Toast.LENGTH_SHORT).show();
         });
 

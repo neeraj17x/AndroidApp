@@ -12,9 +12,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 public class ExpenseListActivity extends AppCompatActivity {
 
     private ExpenseAdapter adapter;
+    private ExpenseDatabase database;
+    private RecyclerView expenseRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,14 +26,22 @@ public class ExpenseListActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_expense_list);
 
-        RecyclerView expenseRecyclerView = findViewById(R.id.expenseRecyclerView);
+        database = DatabaseProvider.getDatabase(this);
+        expenseRecyclerView = findViewById(R.id.expenseRecyclerView);
 
         expenseRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this)
         );
 
-        adapter = new ExpenseAdapter(MainActivity.expenses);
+        //adapter = new ExpenseAdapter(MainActivity.expenses);
         //Toast.makeText(this, "Expenses: " + MainActivity.expenses.size(), Toast.LENGTH_LONG).show();
+        new Thread(() -> {
+            List<Expense> expenses = database.expenseDao().getAllExpenses();
+            runOnUiThread(() -> {
+                adapter = new ExpenseAdapter(expenses);
+                expenseRecyclerView.setAdapter(adapter);
+            });
+        }).start();
 
         expenseRecyclerView.setAdapter(adapter);
 
@@ -60,8 +72,16 @@ public class ExpenseListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (adapter != null) {
+        /*if (adapter != null) {
             adapter.notifyDataSetChanged();
-        }
+        }*/
+
+        new Thread(() -> {
+            List<Expense> expenses = database.expenseDao().getAllExpenses();
+            runOnUiThread(() -> {
+                adapter = new ExpenseAdapter(expenses);
+                expenseRecyclerView.setAdapter(adapter);
+            });
+        }).start();
     }
 }

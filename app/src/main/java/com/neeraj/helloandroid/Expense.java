@@ -1,7 +1,13 @@
 package com.neeraj.helloandroid;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity
 public class Expense {
 
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     private double amount;
     private String description;
     private String paymentType;
@@ -14,6 +20,12 @@ public class Expense {
         this.date = date;
     }
 
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public double getAmount() {
         return amount;
     }
